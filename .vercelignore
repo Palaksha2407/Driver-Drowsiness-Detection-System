@@ -1,0 +1,13 @@
+# Ignore heavy machine learning models and datasets
+models/
+mrlEyes_2018_01/
+*.h5
+
+# Ignore python environment and notebooks
+*.ipynb
+*.py
+.idea/
+.vscode/
+__pycache__/
+
+# We only want Vercel to deploy the 'web' folder and its contents
