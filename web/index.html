@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drowsiness Detection</title>
+  <meta name="description" content="Real-time driver drowsiness detection using webcam and face landmark analysis. Alerts you if your eyes stay closed for more than 5 seconds.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header__dot"></div>
+      <h1 class="header__title">Drowsiness Detection</h1>
+      <span class="header__badge">LIVE</span>
+    </header>
+
+    <!-- Start overlay -- needed to unlock browser audio autoplay -->
+    <div class="start-overlay" id="startOverlay">
+      <div class="start-overlay__content">
+        <div class="start-overlay__icon">👁</div>
+        <h2 class="start-overlay__title">Drowsiness Detection</h2>
+        <p class="start-overlay__desc">Uses your webcam to detect if your eyes close for more than 2.5 seconds and sounds an alarm.</p>
+        <button class="start-btn" id="startBtn">Start Detection</button>
+        <p class="start-overlay__note">Camera access required &middot; All processing happens locally</p>
+      </div>
+    </div>
+
+    <!-- Main camera container -->
+    <main class="camera-card" id="cameraCard">
+      <!-- Loading state -->
+      <div class="loading" id="loadingOverlay">
+        <div class="loading__spinner"></div>
+        <p class="loading__text">Initializing camera...</p>
+      </div>
+
+      <!-- Error state -->
+      <div class="error-state hidden" id="errorState">
+        <div class="error-state__icon">⚠</div>
+        <p class="error-state__text" id="errorText">Camera access denied</p>
+        <button class="btn" id="retryBtn" onclick="location.reload()">Retry</button>
+      </div>
+
+      <!-- Video + Canvas -->
+      <video id="webcam" playsinline autoplay muted></video>
+      <canvas id="overlay"></canvas>
+
+      <!-- No face badge -->
+      <div class="no-face-badge hidden" id="noFaceBadge">No face detected</div>
+    </main>
+
+    <!-- Status panel -->
+    <section class="status-panel" id="statusPanel">
+      <div class="status-row">
+        <div class="status-indicator" id="statusDot"></div>
+        <span class="status-label" id="statusLabel">Waiting...</span>
+        <span class="ear-value" id="earValue">EAR: --</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <span class="timer-text" id="timerText">0.0s / 5.0s</span>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Close eyes for 2.5 seconds to trigger alarm &middot; Works entirely in your browser</p>
+    </footer>
+  </div>
+
+  <!-- Audio -->
+  <audio id="alarmAudio" src="assets/alarm.wav" preload="auto" loop></audio>
+
+  <!-- MediaPipe CDN (required for face landmark detection) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+
+  <!-- App logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>
