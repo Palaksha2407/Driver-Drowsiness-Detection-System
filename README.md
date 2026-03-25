@@ -1,6 +1,8 @@
 # Driver Drowsiness Detection System
 
-Real-time drowsiness detection using webcam feed, OpenCV, and a deep learning model (InceptionV3). If the driver's eyes remain closed for more than **5 continuous seconds**, an alarm sounds to alert them.
+🚀 **Live Web App:** [https://driver-drowsiness-detection-system-phi.vercel.app/](https://driver-drowsiness-detection-system-phi.vercel.app/)
+
+Real-time drowsiness detection using webcam feed, OpenCV, and a deep learning model (InceptionV3). If the driver's eyes remain closed for more than **2.5 continuous seconds**, an alarm sounds to alert them.
 
 ## How It Works
 
@@ -11,7 +13,7 @@ Webcam Feed → Face Detection → Eye Detection (within face) → CNN Predictio
 1. **Face Detection** — Haar Cascade detects the driver's face
 2. **Eye Detection** — Eyes are located in the upper half of the face ROI (avoids false detections from mouth/nostrils)
 3. **Classification** — A trained InceptionV3 model predicts whether each eye is **open** or **closed**
-4. **Alarm Logic** — If both eyes are closed for 5+ continuous seconds, a looping alarm plays. It stops immediately when eyes reopen.
+4. **Alarm Logic** — If both eyes are closed for 2.5+ continuous seconds, a looping alarm plays. It stops immediately when eyes reopen.
 
 ## Project Structure
 
@@ -105,8 +107,8 @@ If you're on a Mac and new to this, follow these steps:
 | Display | Meaning |
 |---------|---------|
 | **OPEN** (green) | Eyes are open — normal |
-| **CLOSED (2.3s / 5s)** (orange) | Eyes closed — timer counting |
-| **CLOSED (5.1s / 5s)** (red) | Alarm triggered! |
+| **CLOSED (2.3s / 2.5s)** (orange) | Eyes closed — timer counting |
+| **CLOSED (2.6s / 2.5s)** (red) | Alarm triggered! |
 
 ## Retraining the Model (Optional)
 

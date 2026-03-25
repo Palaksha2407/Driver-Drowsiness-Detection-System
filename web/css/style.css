@@ -1,0 +1,504 @@
+/* ========================================
+   DROWSINESS DETECTION — VANILLA CSS
+   Dark theme + glassmorphism + animations
+   ======================================== */
+
+/* --- CSS Variables --- */
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: rgba(20, 20, 35, 0.85);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --text-primary: #e8e8ef;
+  --text-secondary: #8888a0;
+  --text-muted: #55556a;
+  --green: #00e676;
+  --green-glow: rgba(0, 230, 118, 0.3);
+  --orange: #ff9100;
+  --orange-glow: rgba(255, 145, 0, 0.3);
+  --red: #ff1744;
+  --red-glow: rgba(255, 23, 68, 0.4);
+  --accent: #7c4dff;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* --- Start Overlay --- */
+.start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-primary);
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.start-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.start-overlay__content {
+  text-align: center;
+  padding: 40px;
+  max-width: 420px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.start-overlay__icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.start-overlay__title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.start-overlay__desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.start-btn {
+  padding: 14px 40px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--accent), #651fff);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(124, 77, 255, 0.3);
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(124, 77, 255, 0.45);
+}
+
+.start-btn:active {
+  transform: translateY(0);
+}
+
+.start-overlay__note {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+/* --- Background grain --- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(124, 77, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 230, 118, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(255, 23, 68, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- App Container --- */
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  padding: 20px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+.header__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.header__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  flex: 1;
+}
+
+.header__badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(255, 23, 68, 0.15);
+  color: var(--red);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* --- Camera Card --- */
+.camera-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: box-shadow 0.5s ease;
+}
+
+.camera-card.state-open {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 30px var(--green-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.camera-card.state-closing {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 40px var(--orange-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.camera-card.state-alarm {
+  animation: alarmFlash 0.8s ease-in-out infinite;
+}
+
+#webcam, #overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* mirror */
+}
+
+#webcam {
+  z-index: 1;
+}
+
+#overlay {
+  z-index: 2;
+}
+
+/* --- No face badge --- */
+.no-face-badge {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--text-secondary);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.3s ease;
+}
+
+/* --- Loading State --- */
+.loading {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-card);
+}
+
+.loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-glass);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading__text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* --- Error State --- */
+.error-state {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+}
+
+.error-state__icon {
+  font-size: 2.5rem;
+}
+
+.error-state__text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0 20px;
+}
+
+.btn {
+  padding: 8px 24px;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  background: rgba(124, 77, 255, 0.15);
+  color: var(--accent);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background: rgba(124, 77, 255, 0.25);
+  box-shadow: 0 0 15px rgba(124, 77, 255, 0.2);
+}
+
+/* --- Status Panel --- */
+.status-panel {
+  margin-top: 16px;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: fadeInUp 0.6s ease-out 0.15s both;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.status-indicator.open {
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green-glow);
+  animation: pulseGreen 1.5s ease-in-out infinite;
+}
+
+.status-indicator.closing {
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange-glow);
+  animation: pulseOrange 0.8s ease-in-out infinite;
+}
+
+.status-indicator.alarm {
+  background: var(--red);
+  box-shadow: 0 0 14px var(--red-glow);
+  animation: pulseRed 0.4s ease-in-out infinite;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex: 1;
+  transition: color 0.3s ease;
+}
+
+.ear-value {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Progress Bar --- */
+.progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--orange), var(--red));
+  transition: width 0.2s linear;
+}
+
+.timer-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Footer --- */
+.footer {
+  text-align: center;
+  margin-top: 16px;
+  padding: 0 4px;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.footer p {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* --- Utility --- */
+.hidden {
+  display: none !important;
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 8px var(--green-glow); }
+  50% { box-shadow: 0 0 18px var(--green-glow); }
+}
+
+@keyframes pulseOrange {
+  0%, 100% { box-shadow: 0 0 8px var(--orange-glow); }
+  50% { box-shadow: 0 0 20px var(--orange-glow); }
+}
+
+@keyframes pulseRed {
+  0%, 100% { box-shadow: 0 0 10px var(--red-glow); }
+  50% { box-shadow: 0 0 24px var(--red-glow); }
+}
+
+@keyframes alarmFlash {
+  0%, 100% {
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 30px var(--red-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 60px var(--red-glow),
+      0 0 100px rgba(255, 23, 68, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 480px) {
+  .app {
+    padding: 12px;
+  }
+
+  .header__title {
+    font-size: 1.05rem;
+  }
+
+  .camera-card {
+    border-radius: 12px;
+  }
+
+  .status-panel {
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  .status-label {
+    font-size: 0.82rem;
+  }
+}
